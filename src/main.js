@@ -11,6 +11,9 @@ document.querySelector("#app").innerHTML = `
       <section class="card">
         <h2>1. Gespreksgegevens</h2>
 
+        <label>naam accountmanager</label>
+        <input id="accountManager" placeholder="Bijv. Mitch, Cees" />
+
         <label>Klantnaam</label>
         <input id="customer" placeholder="Bijv. HVC, Dunea, Tata Steel" />
 
@@ -157,6 +160,8 @@ document.querySelector("#addAction").addEventListener("click", () => {
 document.querySelector("#generate").addEventListener("click", () => {
   const customer = document.querySelector("#customer").value;
   const contact = document.querySelector("#contact").value;
+  const accountManager = document.querySelector("#accountManager").value;
+  <p><strong>Accountmanager:</strong> ${accountManager || "-"}</p>
   const meetingType = document.querySelector("#meetingType").value;
   const status = document.querySelector("#status").value;
   const notes = document.querySelector("#notes").value;
