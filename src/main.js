@@ -79,6 +79,7 @@ document.querySelector("#app").innerHTML = `
 
       <div class="buttons">
         <button id="copy">Kopieer verslag</button>
+        <button id="mail">Mail verslag</button>
         <button id="clear">Nieuw gesprek</button>
       </div>
     </section>
@@ -224,6 +225,20 @@ document.querySelector("#copy").addEventListener("click", () => {
   const text = document.querySelector("#output").innerText;
   navigator.clipboard.writeText(text);
   alert("Verslag gekopieerd.");
+});
+document.querySelector("#mail").addEventListener("click", () => {
+  const customer = document.querySelector("#customer").value || "klant";
+  const reportText = document.querySelector("#output").innerText;
+
+  if (!reportText || reportText.includes("Nog geen verslag")) {
+    alert("Genereer eerst een verslag.");
+    return;
+  }
+
+  const subject = encodeURIComponent(`Gespreksverslag - ${customer}`);
+  const body = encodeURIComponent(reportText);
+
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
 });
 
 document.querySelector("#clear").addEventListener("click", () => {
