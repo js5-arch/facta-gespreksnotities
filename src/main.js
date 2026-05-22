@@ -66,6 +66,7 @@ document.querySelector("#app").innerHTML = `
       <div class="action-row">
         <input id="actionText" placeholder="Actie, bijv. offerte uitwerken" />
         <input id="actionOwner" placeholder="Eigenaar" />
+        <input id="actionEmail" placeholder="E-mail actiehouder" />
         <input id="actionDate" type="date" />
         <button id="addAction">Toevoegen</button>
       </div>
@@ -80,6 +81,7 @@ document.querySelector("#app").innerHTML = `
       <div class="buttons">
         <button id="copy">Kopieer verslag</button>
         <button id="mail">Mail verslag</button>
+        <button id="mailActions">Mail acties</button>
         <button id="clear">Nieuw gesprek</button>
       </div>
     </section>
@@ -131,6 +133,7 @@ function renderActions() {
     <div class="action-card">
       <strong>${a.text}</strong>
       <span>Eigenaar: ${a.owner || "n.t.b."}</span>
+      <span>E-mail: ${a.email || "n.t.b."}</span>
       <span>Deadline: ${a.date || "n.t.b."}</span>
       <button onclick="removeAction(${index})">Verwijder</button>
     </div>
@@ -145,14 +148,16 @@ window.removeAction = function(index) {
 document.querySelector("#addAction").addEventListener("click", () => {
   const text = document.querySelector("#actionText").value;
   const owner = document.querySelector("#actionOwner").value;
+  const email = document.querySelector("#actionEmail").value;
   const date = document.querySelector("#actionDate").value;
 
   if (!text) return;
 
-  actions.push({ text, owner, date });
+  actions.push({ text, owner, email, date });
 
   document.querySelector("#actionText").value = "";
   document.querySelector("#actionOwner").value = "";
+  document.querySelector("#actionEmail").value = "";
   document.querySelector("#actionDate").value = "";
 
   renderActions();
@@ -240,7 +245,43 @@ document.querySelector("#mail").addEventListener("click", () => {
 
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
 });
+document.querySelector("#mailActions").addEventListener("click", () => {
+  const customer = document.querySelector("#customer").value || "klant";
+  const reportText = document.querySelector("#output").innerText;
 
+  if (!reportText || reportText.includes("Nog geen verslag")) {
+    alert("Genereer eerst een verslag.");
+    return;
+  }
+
+  const actionsWithEmail = actions.filter(action => action.email);
+
+  if (actionsWithEmail.length === 0) {
+    alert("Er zijn nog geen acties met e-mailadres ingevuld.");
+    return;
+  }
+
+  actionsWithEmail.forEach(action => {
+    const subject = encodeURIComponent(`Actie uit klantgesprek - ${customer}`);
+
+    const body = encodeURIComponent(`
+Beste ${action.owner || ""},
+
+Uit het klantgesprek met ${customer} staat onderstaande actie voor jou open:
+
+Actie:
+${action.text}
+
+Deadline:
+${action.date || "Nog niet bepaald"}
+
+Gespreksverslag:
+${reportText}
+    `);
+
+    window.open(`mailto:${action.email}?subject=${subject}&body=${body}`);
+  });
+});
 document.querySelector("#clear").addEventListener("click", () => {
   location.reload();
 });
