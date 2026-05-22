@@ -1,4 +1,5 @@
 import "./style.css";
+import { jsPDF } from "jspdf";
 
 let actions = [];
 
@@ -85,6 +86,7 @@ document.querySelector("#app").innerHTML = `
       <div class="buttons">
         <button id="copy">Kopieer verslag</button>
         <button id="mail">Mail verslag</button>
+        <button id="pdf">Download PDF</button>
         <button id="mailActions">Mail acties</button>
         <button id="clear">Nieuw gesprek</button>
       </div>
@@ -230,12 +232,8 @@ document.querySelector("#generate").addEventListener("click", () => {
   `;
 });
 
-document.querySelector("#copy").addEventListener("click", () => {
-  const text = document.querySelector("#output").innerText;
-  navigator.clipboard.writeText(text);
-  alert("Verslag gekopieerd.");
-});
-document.querySelector("#mail").addEventListener("click", () => {
+ddocument.querySelector("#mail").addEventListener("click", () => {
+
   const customer = document.querySelector("#customer").value || "klant";
   const reportText = document.querySelector("#output").innerText;
 
@@ -248,8 +246,38 @@ document.querySelector("#mail").addEventListener("click", () => {
   const body = encodeURIComponent(reportText);
 
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
+
 });
+
+document.querySelector("#pdf").addEventListener("click", () => {
+
+  const customer = document.querySelector("#customer").value || "klant";
+  const reportText = document.querySelector("#output").innerText;
+
+  if (!reportText || reportText.includes("Nog geen verslag")) {
+    alert("Genereer eerst een verslag.");
+    return;
+  }
+
+  const doc = new jsPDF();
+
+  doc.setFontSize(22);
+  doc.text("FACTA", 20, 20);
+
+  doc.setFontSize(16);
+  doc.text(`Gespreksverslag - ${customer}`, 20, 35);
+
+  doc.setFontSize(11);
+
+  const lines = doc.splitTextToSize(reportText, 170);
+  doc.text(lines, 20, 50);
+
+  doc.save(`gespreksverslag-${customer}.pdf`);
+
+});
+
 document.querySelector("#mailActions").addEventListener("click", () => {
+
   const customer = document.querySelector("#customer").value || "klant";
   const reportText = document.querySelector("#output").innerText;
 
@@ -266,6 +294,7 @@ document.querySelector("#mailActions").addEventListener("click", () => {
   }
 
   actionsWithEmail.forEach(action => {
+
     const subject = encodeURIComponent(`Actie uit klantgesprek - ${customer}`);
 
     const body = encodeURIComponent(`
@@ -277,15 +306,21 @@ Actie:
 ${action.text}
 
 Deadline:
-${action.date || "Nog niet bepaald"}
+${action.date || "geen deadline"}
 
-Gespreksverslag:
+Volledig verslag:
 ${reportText}
+
+Met vriendelijke groet,
+Facta
     `);
 
     window.open(`mailto:${action.email}?subject=${subject}&body=${body}`);
+
   });
+
 });
+
 document.querySelector("#clear").addEventListener("click", () => {
   location.reload();
 });
