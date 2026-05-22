@@ -161,7 +161,6 @@ document.querySelector("#generate").addEventListener("click", () => {
   const customer = document.querySelector("#customer").value;
   const contact = document.querySelector("#contact").value;
   const accountManager = document.querySelector("#accountManager").value;
-  <p><strong>Accountmanager:</strong> ${accountManager || "-"}</p>
   const meetingType = document.querySelector("#meetingType").value;
   const status = document.querySelector("#status").value;
   const notes = document.querySelector("#notes").value;
@@ -187,6 +186,7 @@ document.querySelector("#generate").addEventListener("click", () => {
 
     <p><strong>Klant:</strong> ${customer || "-"}</p>
     <p><strong>Contactpersoon:</strong> ${contact || "-"}</p>
+    <p><strong>Accountmanager:</strong> ${accountManager || "-"}</p>
     <p><strong>Type gesprek:</strong> ${meetingType}</p>
     <p><strong>Classificatie:</strong> ${classification}</p>
     <p><strong>Status:</strong> ${status}</p>
