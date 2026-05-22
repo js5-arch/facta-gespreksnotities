@@ -4,6 +4,10 @@ let actions = [];
 
 document.querySelector("#app").innerHTML = `
   <div class="app">
+  <div style="text-align:center; margin-bottom:20px;">
+  <img src="/logo.jpg" alt="Facta" style="height:70px;" />
+  </div>
+
     <h1>Facta Gespreksverslagen</h1>
     <p class="subtitle">Klantgesprek vastleggen, structureren en opvolgen</p>
 
